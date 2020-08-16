@@ -27,3 +27,8 @@ The build tool also defines a variable named `process.env.NODE_ENV` in your scri
 ## Docs
 
 * [webextension-toolbox](https://github.com/HaNdTriX/webextension-toolbox)
+
+## Inspiration
+
+* [location-guard](https://github.com/chatziko/location-guard)
+* [geo-mock](https://github.com/janmonschke/GeoMock)
