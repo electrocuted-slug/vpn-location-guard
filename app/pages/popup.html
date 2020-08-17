@@ -1,37 +1,114 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <meta charset="utf-8" />
-  <title>Popup</title>
-  <link rel="stylesheet" type="text/css" href="../styles/popup.css">
+    <meta charset="utf-8" />
+    <title>Popup</title>
+    <link rel="stylesheet" type="text/css" href="../styles/popup.css">
 </head>
+
 <body>
-    <table>
-        <tbody>
-        <tr>
-            <th>
-                <h3>Global Override</h3>
-            </th>
-            <td>
-                <label class="rocker rocker-small">
-                    <input type="checkbox" id="override">
-                    <span class="switch-left">On</span>
-                    <span class="switch-right">Off</span>
-                </label>
-            </td>
-            <td>
-                <h3>This WebSite</h3>
-            </td>
-            <td>
-                <label class="rocker rocker-small">
-                    <input type="checkbox" id="site">
-                    <span class="switch-left">Yes</span>
-                    <span class="switch-right">No</span>
-                </label>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-  <script src="../scripts/popup.js"></script>
+    <div class="card">
+        <div class="rating-container">
+            <div class="rating-text">
+                <p>Global Override</p>
+            </div>
+            <div class="rating">
+                <form class="rating-form">
+
+                    <label for="secure">
+                        <input type="radio" name="rating" class="happy" id="secure" value="secure" />
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path
+                                d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
+                        </svg>
+                    </label>
+
+                    <label for="neutral">
+                        <input type="radio" name="rating" class="neutral" id="neutral" value="neutral" checked />
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                            <path d="M0 0h24v24H0zm0 0h24v24H0zm0 0h24v24H0V0zm0 0h24v24H0V0z" fill="none" />
+                            <path
+                                d="M21 21.78L4.22 5 3 6.22l2.04 2.04C4.42 8.6 4 9.25 4 10v10c0 1.1.9 2 2 2h12c.23 0 .45-.05.66-.12L19.78 23 21 21.78zM8.9 6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H9.66L20 18.34V10c0-1.1-.9-2-2-2h-1V6c0-2.76-2.24-5-5-5-2.56 0-4.64 1.93-4.94 4.4L8.9 7.24V6z" />
+                        </svg>
+                    </label>
+
+                    <label for="insecure">
+                        <input type="radio" name="rating" class="super-sad" id="insecure" value="insecure" />
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path
+                                d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z" />
+                        </svg>
+                    </label>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="rating-container">
+            <div class="rating-text">
+                <p>This WebSite</p>
+            </div>
+            <div class="rating">
+                <form class="rating-form-1">
+
+                    <label for="secure2">
+                        <input type="radio" name="rating" class="happy" id="secure2" value="secure2" />
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path
+                                d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z" />
+                        </svg>
+                    </label>
+
+                    <label for="neutral2">
+                        <input type="radio" name="rating" class="neutral" id="neutral2" value="neutral2" checked />
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                            <path d="M0 0h24v24H0zm0 0h24v24H0zm0 0h24v24H0V0zm0 0h24v24H0V0z" fill="none" />
+                            <path
+                                d="M21 21.78L4.22 5 3 6.22l2.04 2.04C4.42 8.6 4 9.25 4 10v10c0 1.1.9 2 2 2h12c.23 0 .45-.05.66-.12L19.78 23 21 21.78zM8.9 6c0-1.71 1.39-3.1 3.1-3.1s3.1 1.39 3.1 3.1v2H9.66L20 18.34V10c0-1.1-.9-2-2-2h-1V6c0-2.76-2.24-5-5-5-2.56 0-4.64 1.93-4.94 4.4L8.9 7.24V6z" />
+                        </svg>
+                    </label>
+
+                    <label for="insecure2">
+                        <input type="radio" name="rating" class="super-sad" id="insecure2" value="insecure2" />
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path
+                                d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z" />
+                        </svg>
+                    </label>
+
+                </form>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="card">
+            <div class="rating-container">
+                <div class="rating-text">
+                    <p>Delete All Settings</p>
+                </div>
+                <div class="rating">
+                    <form class="rating-form-2"></form>
+                    <label for="clear">
+                        <input type="button" name="rating" class="super-sad" id="clear" value="clear" />
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24">
+                            <path d="M0 0h24v24H0z" fill="none" />
+                            <path d="M0 0h24v24H0V0z" fill="none" />
+                            <path
+                                d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-1-1h-5l-1 1H5v2h14V4z" />
+                        </svg>
+                    </label>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../scripts/popup.js"></script>
 </body>
+
 </html>

@@ -1,6 +1,6 @@
 {
   "name": "vpn-location-guard",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "description": "Hide your geographic location from websites.",
   "scripts": {
     "dev": "webextension-toolbox dev",
