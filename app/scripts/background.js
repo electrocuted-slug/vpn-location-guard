@@ -9,7 +9,7 @@ browser.runtime.onInstalled.addListener((details) => {
 })
 
 function geoSendFailure(err, msg, message, code) {
-  console.error(err);
+  if (err) console.error(err);
   return {
     ts: msg.ts,
     success: false,
@@ -106,7 +106,7 @@ function onMessage(msg, sender, sendResponse) {
     }
     case 'v1.geo': // params { }
     {
-      if (!msg.allow_host) {
+      if (msg.allow_host == false) {
         var ret_data = {}
         ret_data = geoSendFailure(null, msg, "User denied geolocation prompt.", 1)
         ret_data.key = "v1.geo_done"
@@ -154,12 +154,29 @@ function onMessage(msg, sender, sendResponse) {
     }
     case 'v1.storage': {
       switch (msg.method) {
+        case "clear_host": {
+          var query = {
+            active: true,
+            currentWindow: true
+          };
+          return browser.tabs.query(query).then((tabs) => {
+            if (tabs == undefined || tabs[0] == undefined) return Promise.resolve('Unusable tab')
+            const url = new URL(tabs[0].url)
+            browser.storage.local.remove(url.hostname).then(
+              (err) => {
+                return err
+              }
+            )
+          })
+          break
+        }
         case "clear": {
           return browser.storage.local.clear().then(() => {
             return "ok"
           }, (err) => {
             return err
           })
+          break
         }
         case "get": {
           return browser.storage.local.get([msg.method_key]).then((temp_override) => {
@@ -168,6 +185,7 @@ function onMessage(msg, sender, sendResponse) {
             console.warn(e)
             return e
           })
+          break
         }
         case "get_host": {
           var query = {
@@ -184,6 +202,7 @@ function onMessage(msg, sender, sendResponse) {
               return e
             })
           })
+          break
         }
         case "set": {
           var input = {
@@ -214,6 +233,7 @@ function onMessage(msg, sender, sendResponse) {
           })
         }
       }
+      break
     }
     default: {
       console.log(TAG + fTAG + "port message received")

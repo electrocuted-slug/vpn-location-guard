@@ -1,5 +1,6 @@
-(function () {
-    var fTAG = "actualCode:: "
+'use strict';
+
+(() => {
     var cbs0 = {}
     var cbs1 = {}
     var ids = {}
@@ -28,7 +29,7 @@
     }
 
     function geoSuccess(data) {
-        position = {}
+        var position = {}
         position.timestamp = Date.now()
         position.coords = {
             latitude: data.latitude,
@@ -87,6 +88,7 @@
     if (navigator.permissions) {
         navigator.permissions.query = (query) => {
             if (query.name === "geolocation") {
+                var options
                 options = {}
                 options.typ = 'ps'
                 options.hostname = location.hostname
@@ -146,7 +148,7 @@
             return id
         }
         navigator.geolocation.clearWatch = function (id) {
-            options = {}
+            var options = {}
             options.typ = 'cw'
             options.id = id
             options.hostname = location.hostname
@@ -182,7 +184,6 @@
         }
     })
 
-    require('./sweetalert.min')
     var s = document.getElementById('__vlg_script');
     if (s) s.remove();
 })();

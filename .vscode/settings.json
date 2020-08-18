@@ -23,5 +23,10 @@
             "html"
         ]
         // ^^ providing just an array sets the VS Code file type
-    }
+    },
+    "beautify.ignore": [
+        "**/*sweetalert2.all.min.js",
+        "**/*audio-uris.js",
+        "**/*img-uris.js"
+    ]
 }

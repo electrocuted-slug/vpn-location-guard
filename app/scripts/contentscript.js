@@ -1,6 +1,6 @@
-(() => {
-    var inject = require('./inject')
+'use strict';
 
+(() => {
     function insertScript(inline, data) {
         var script = document.createElement('script');
         script.setAttribute('id', '__vlg_script');
@@ -17,18 +17,24 @@
             _parent.appendChild(script);
     }
 
+    const ij = require('./jumpinpage')
+
     var code =
-        "(" + inject + ")();" +
+        "(" + ij + ")();" +
         insertScript(true, code)
 
     var s = document.getElementById('__vlg_script')
     if (s) {
         s.remove()
-        var url = browser.runtime.getURL("scripts/inject.js")
+        var url = browser.runtime.getURL("scripts/jumpinpage.js")
         insertScript(false, url);
     }
 
     var st = require('./storage-vars')
+    var Swal = require('./sweetalert2.all.min')
+    var img_uris = require('./img-uris')
+    var audio_uris = require('./audio-uris')
+    var pending_request = false;
 
     if (typeof (browser) === 'undefined')
         window.browser = chrome;
@@ -40,58 +46,120 @@
                 let override = active[st.override_key]
                 browser.storage.local.get(send.hostname).then((allowed) => {
                     let host_allowed = allowed[send.hostname]
-                    if (send === undefined) send = {}
-                    let final_out = host_allowed || override
-                    send.active = final_out
+                    let spoof = null
+                    if (host_allowed == true || override == true) spoof = true
+                    if (spoof == null && host_allowed == false) spoof = false
+                    if (spoof != true && spoof != false) spoof = undefined
+                    send.active = spoof
                     send.tabid = tabid
-                    if (host_allowed == undefined && (override == false || override == undefined)) {
-                        if (send.typ === 'ps') {
-                            send.active = undefined
-                            var eventDetail = typeof cloneInto === "function" ? cloneInto(send, document.defaultView) : send
-                            document.dispatchEvent(new CustomEvent('v1.dispatched_outside', {
-                                detail: eventDetail
-                            }))
-                            return
-                        }
-                        swal({
-                            title: "Share FAKE location for " + send.hostname + " ?",
-                            text: "You can change this later back clicking the app icon.",
-                            icon: "info",
-                            buttons: true
-                        }).then((decision) => {
-                            if (decision) final_out = true
-                            else final_out = false
-                            send.active = final_out
-                            browser.storage.local.set({
-                                [send.hostname]: final_out
-                            }).then((err) => {
-                                if (err) console.error(err)
-                                else {
-                                    send.key = 'v1.geo'
-                                    send.tabid = tabid
-                                    send.allow_host = final_out
-                                    browser.runtime.sendMessage(send).then(handleSuccess, handleError)
-                                }
-                            })
-                        })
-                    } else if ((override == false && host_allowed == false) || send.typ === 'cw') {
+                    if (spoof == false || send.typ === 'ps' || send.typ == 'cw') {
                         var eventDetail = typeof cloneInto === "function" ? cloneInto(send, document.defaultView) : send
                         document.dispatchEvent(new CustomEvent('v1.dispatched_outside', {
                             detail: eventDetail
                         }))
-                        return
-                    } else {
-                        if (send.typ === 'ps') {
-                            var eventDetail = typeof cloneInto === "function" ? cloneInto(send, document.defaultView) : send
-                            document.dispatchEvent(new CustomEvent('v1.dispatched_outside', {
-                                detail: eventDetail
-                            }))
-                            return
+                    } else if (spoof == undefined) {
+                        if (pending_request == false) {
+                            pending_request = true
+                            var audio = new Audio(audio_uris.intro);
+                            var loopy = new Audio(audio_uris.loop)
+                            audio.play()
+                            audio.addEventListener('ended', () => {
+                                loopy.loop = true
+                                if (pending_request) loopy.play();
+                            })
+                            Swal.fire({
+                                title: "Share FAKE location for " + send.hostname + " ?",
+                                text: "You can change this later by clicking the app icon.",
+                                icon: 'info',
+                                showCancelButton: true,
+                                confirmButtonColor: 'rgb(0, 204, 79)',
+                                cancelButtonColor: 'rgb(239, 42, 16)',
+                                confirmButtonText: 'Yes',
+                                background: '#fff url(' + img_uris.trees + ')',
+                                backdrop: `
+                                rgba(0,0,123,0.4)
+                                url(` + img_uris.nyan + `)
+                                left top
+                                no-repeat
+                            `
+                            }).then((result) => {
+                                if (result.value) {
+                                    Swal.fire({
+                                        title: 'Sharing FAKE Location',
+                                        text: 'Always share FAKE location?',
+                                        icon: 'success',
+                                        showCancelButton: true,
+                                        confirmButtonColor: 'rgb(0, 204, 79)',
+                                        cancelButtonColor: 'rgb(232, 214, 0)',
+                                        confirmButtonText: 'Yes',
+                                        background: '#fff url(' + img_uris.trees + ')',
+                                        backdrop: `
+                                        rgba(0,0,123,0.4)
+                                        url(` + img_uris.nyan + `)
+                                        left top
+                                        no-repeat
+                                    `
+                                    }).then((res) => {
+                                        spoof = res.value
+                                        send.active = spoof
+                                        browser.storage.local.set({
+                                            [send.hostname]: spoof
+                                        }).then((err) => {
+                                            if (err) console.error(err)
+                                            else {
+                                                send.key = 'v1.geo'
+                                                send.tabid = tabid
+                                                send.allow_host = spoof
+                                                browser.runtime.sendMessage(send)
+                                            }
+                                            loopy.pause()
+                                            pending_request = false
+                                        })
+                                    })
+                                } else {
+                                    Swal.fire({
+                                        title: 'Warning!',
+                                        text: 'This site might access your REAL geolocation (even with a VPN).\n Continue?',
+                                        icon: 'warning',
+                                        showCancelButton: true,
+                                        confirmButtonColor: 'rgb(239, 42, 16)',
+                                        cancelButtonColor: 'rgb(232, 214, 0)',
+                                        confirmButtonText: 'Continue',
+                                        background: '#fff url(' + img_uris.trees + ')',
+                                        backdrop: `
+                                        rgba(0,0,123,0.4)
+                                        url(` + img_uris.nyan + `)
+                                        left top
+                                        no-repeat
+                                    `
+                                    }).then((res) => {
+                                        if (res.value) spoof = false
+                                        else spoof = undefined
+                                        send.active = spoof
+                                        browser.storage.local.set({
+                                            [send.hostname]: spoof
+                                        }).then((err) => {
+                                            if (err) console.error(err)
+                                            else {
+                                                send.key = 'v1.geo'
+                                                send.tabid = tabid
+                                                send.allow_host = spoof
+                                                browser.runtime.sendMessage(send)
+                                            }
+                                            loopy.pause()
+                                            pending_request = false
+                                        })
+                                    })
+                                }
+                            })
                         }
+                    } else if (spoof == true) {
                         send.key = 'v1.geo'
                         send.tabid = tabid
-                        send.allow_host = final_out
-                        browser.runtime.sendMessage(send).then(handleSuccess, handleError)
+                        send.allow_host = spoof
+                        browser.runtime.sendMessage(send)
+                    } else {
+                        // you broke the matrix congrats!
                     }
                 })
             })
@@ -101,22 +169,14 @@
     var TAG = "contentscript:: "
     var tabid
 
-    messageListener = (data, sender, sendResponse) => {
+    var messageListener = (data, sender, sendResponse) => {
         if (data.key === "v1.geo_done") {
-            handleSuccess(data)
+            var eventDetail = typeof cloneInto === "function" ? cloneInto(data, document.defaultView) : data
+            document.dispatchEvent(new CustomEvent('v1.dispatched_outside', {
+                detail: eventDetail
+            }))
         }
         return Promise.resolve("v1.geo_done good")
-    }
-
-    handleSuccess = (send) => {
-        var eventDetail = typeof cloneInto === "function" ? cloneInto(send, document.defaultView) : send
-        document.dispatchEvent(new CustomEvent('v1.dispatched_outside', {
-            detail: eventDetail
-        }))
-    }
-
-    handleError = (er) => {
-        console.error(er)
     }
 
     function setupBrowserEventListeners() {
@@ -135,4 +195,4 @@
     }
 
     setupBrowserEventListeners()
-})()
+})();

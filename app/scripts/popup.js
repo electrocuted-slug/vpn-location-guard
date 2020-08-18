@@ -12,6 +12,7 @@ var site = [
     document.querySelector('input[id="insecure2"]')
 ]
 var clear = document.querySelector('input[id="clear"]');
+var clear_host = document.querySelector('input[id="clear-hostname"]');
 
 checkDisplay = () => {
     if (typeof (browser) === 'undefined') window.browser = chrome;
@@ -55,17 +56,33 @@ checkDisplay = () => {
                 break
             case undefined:
                 site[1].checked = true
-                override[1].parentNode.style.display = 'inline'
+                site[1].parentNode.style.display = 'inline'
                 break
         }
     })
 }
+
+var query = {
+    active: true,
+    currentWindow: true
+};
+chrome.tabs.query(query, (tabs) => {
+    try {
+        let url = new URL(tabs[0].url)
+        document.querySelector('p[id="clear-hostname"').textContent = "Clear " + url.hostname
+    } catch (e) {
+        document.querySelector('p[id="clear-hostname"').textContent = "Clear Site"
+        console.warn(e)
+    }
+    checkDisplay()
+})
 
 checkDisplay()
 
 override.forEach((ov) => {
     ov.addEventListener('change', () => {
         if (ov.id !== "neutral" && ov.checked == true) {
+            console.log(ov.id)
             override[1].parentNode.style.display = 'none'
             browser.runtime.sendMessage({
                 key: 'v1.storage',
@@ -81,11 +98,10 @@ site.forEach((s) => {
     s.addEventListener('change', () => {
         if (s.id !== "neutral2" && s.checked == true) {
             site[1].parentNode.style.display = 'none'
-            var value = s.id === "secure2"
             browser.runtime.sendMessage({
                 key: 'v1.storage',
                 method: 'set_host',
-                method_value: value
+                method_value: s.id === "secure2"
             })
         }
     })
@@ -95,6 +111,14 @@ clear.addEventListener('click', () => {
     browser.runtime.sendMessage({
         key: 'v1.storage',
         method: 'clear',
+    })
+    checkDisplay()
+})
+
+clear_host.addEventListener('click', () => {
+    browser.runtime.sendMessage({
+        key: 'v1.storage',
+        method: 'clear_host',
     })
     checkDisplay()
 })
