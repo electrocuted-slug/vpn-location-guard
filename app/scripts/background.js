@@ -66,88 +66,88 @@ function onMessage(msg, sender, sendResponse) {
   console.log(msg)
   switch (msg.key) {
     case 'v1.console': // params {typ, msg}
-    {
-      switch (msg.typ) {
-        case 'log': {
-          console.log(TAG + fTAG + msg.msg);
-          break;
+      {
+        switch (msg.typ) {
+          case 'log': {
+            console.log(TAG + fTAG + msg.msg);
+            break;
+          }
+          case 'info': {
+            console.info(TAG + fTAG + msg.msg);
+            break;
+          }
+          case 'debug': {
+            console.debug(TAG + fTAG + msg.msg);
+            break;
+          }
+          case 'error': {
+            console.error(TAG + fTAG + msg.msg);
+            break;
+          }
+          case 'warn': {
+            console.warn(TAG + fTAG + msg.msg);
+            break;
+          }
+          case 'trace': {
+            console.trace(TAG + fTAG + msg.msg);
+            break;
+          }
+          default: {
+            console.info(TAG + fTAG + msg.msg);
+            break;
+          }
         }
-        case 'info': {
-          console.info(TAG + fTAG + msg.msg);
-          break;
-        }
-        case 'debug': {
-          console.debug(TAG + fTAG + msg.msg);
-          break;
-        }
-        case 'error': {
-          console.error(TAG + fTAG + msg.msg);
-          break;
-        }
-        case 'warn': {
-          console.warn(TAG + fTAG + msg.msg);
-          break;
-        }
-        case 'trace': {
-          console.trace(TAG + fTAG + msg.msg);
-          break;
-        }
-        default: {
-          console.info(TAG + fTAG + msg.msg);
-          break;
-        }
+        break;
       }
-      break;
-    }
     case 'v1.injected': // params { href }
-    {
-      console.info(TAG + fTAG + "script injected into ", msg.href)
-      break;
-    }
-    case 'v1.geo': // params { }
-    {
-      if (msg.allow_host == false) {
-        var ret_data = {}
-        ret_data = geoSendFailure(null, msg, "User denied geolocation prompt.", 1)
-        ret_data.key = "v1.geo_done"
-        console.log(ret_data)
-        browser.tabs.sendMessage(sender.tab.id, ret_data).then((resp) => {
-          console.log(resp)
-        })
-        return true
-      } else {
-        console.log("fetching geo")
-        fetch("https://am.i.mullvad.net/json")
-          .then(response => response.json())
-          .then(data => {
-            var ret_data = {}
-            data.ts = msg.ts;
-            data.maximumAge = msg.maximumAge;
-            data.timeout = msg.timeout;
-            data.enableHighAccuracy = msg.enableHighAccuracy;
-            data.active = msg.active
-            data.typ = msg.typ
-            ret_data = geoSendMessage(data, msg.tabid)
-            ret_data.key = "v1.geo_done"
-            console.log(ret_data)
-            browser.tabs.sendMessage(sender.tab.id, ret_data).then((resp) => {
-              console.log(resp)
-            })
-            return true
-          }).catch((error) => {
-            var ret_data = {}
-            console.error(error);
-            ret_data = geoSendFailure(error, msg, "Timeout expired!", 3)
-            ret_data.key = "v1.geo_done"
-            console.log(ret_data)
-            browser.tabs.sendMessage(sender.tab.id, ret_data).then((resp) => {
-              console.log(resp)
-            })
-            return true
-          });
+      {
+        console.info(TAG + fTAG + "script injected into ", msg.href)
+        break;
       }
-      break
-    }
+    case 'v1.geo': // params { }
+      {
+        if (msg.allow_host == false) {
+          var ret_data = {}
+          ret_data = geoSendFailure(null, msg, "User denied geolocation prompt.", 1)
+          ret_data.key = "v1.geo_done"
+          console.log(ret_data)
+          browser.tabs.sendMessage(sender.tab.id, ret_data).then((resp) => {
+            console.log(resp)
+          })
+          return true
+        } else {
+          console.log("fetching geo")
+          fetch("https://am.i.mullvad.net/json")
+            .then(response => response.json())
+            .then(data => {
+              var ret_data = {}
+              data.ts = msg.ts;
+              data.maximumAge = msg.maximumAge;
+              data.timeout = msg.timeout;
+              data.enableHighAccuracy = msg.enableHighAccuracy;
+              data.active = msg.active
+              data.typ = msg.typ
+              ret_data = geoSendMessage(data, msg.tabid)
+              ret_data.key = "v1.geo_done"
+              console.log(ret_data)
+              browser.tabs.sendMessage(sender.tab.id, ret_data).then((resp) => {
+                console.log(resp)
+              })
+              return true
+            }).catch((error) => {
+              var ret_data = {}
+              console.error(error);
+              ret_data = geoSendFailure(error, msg, "Timeout expired!", 3)
+              ret_data.key = "v1.geo_done"
+              console.log(ret_data)
+              browser.tabs.sendMessage(sender.tab.id, ret_data).then((resp) => {
+                console.log(resp)
+              })
+              return true
+            });
+        }
+        break
+      }
     case 'v1.get_tabid': {
       console.log(TAG + fTAG + " tabid " + sender.tab.id);
       return Promise.resolve(sender.tab.id)
@@ -179,8 +179,8 @@ function onMessage(msg, sender, sendResponse) {
           break
         }
         case "get": {
-          return browser.storage.local.get([msg.method_key]).then((temp_override) => {
-            return temp_override[msg.method_key]
+          return browser.storage.local.get([msg.method_key]).then((result) => {
+            return result[msg.method_key]
           }, (e) => {
             console.warn(e)
             return e

@@ -11,6 +11,18 @@ var site = [
     document.querySelector('input[id="neutral2"]'),
     document.querySelector('input[id="insecure2"]')
 ]
+
+var audio = [
+    document.querySelector('input[id="audio-on"]'),
+    document.querySelector('input[id="audio-off"]')
+]
+
+var characters = [
+    document.querySelector('input[id="vader"]'),
+    document.querySelector('input[id="nyan"]'),
+    document.querySelector('input[id="yoda"]')
+]
+
 var clear = document.querySelector('input[id="clear"]');
 var clear_host = document.querySelector('input[id="clear-hostname"]');
 
@@ -18,7 +30,7 @@ checkDisplay = () => {
     if (typeof (browser) === 'undefined') window.browser = chrome;
 
     if (browser == undefined) {
-        console.log("no browser!")
+        console.log(`${TAG} no browser!`)
         return
     }
     browser.runtime.sendMessage({
@@ -58,6 +70,30 @@ checkDisplay = () => {
                 site[1].checked = true
                 site[1].parentNode.style.display = 'inline'
                 break
+        }
+    })
+    browser.runtime.sendMessage({
+        key: 'v1.storage',
+        method: 'get',
+        method_key: st.audio_key
+    }).then((play_audio) => {
+        if (play_audio) {
+            audio[0].checked = true
+        } else {
+            audio[1].checked = true
+        }
+    })
+    browser.runtime.sendMessage({
+        key: 'v1.storage',
+        method: 'get',
+        method_key: st.character_key
+    }).then(character => {
+        if (character === "yoda") {
+            characters[2].checked = true
+        } else if (character === "nyan") {
+            characters[1].checked = true
+        } else {
+            characters[0].checked = true
         }
     })
 }
@@ -102,6 +138,32 @@ site.forEach((s) => {
                 key: 'v1.storage',
                 method: 'set_host',
                 method_value: s.id === "secure2"
+            })
+        }
+    })
+})
+
+audio.forEach((a) => {
+    a.addEventListener('change', () => {
+        if (a.checked == true) {
+            browser.runtime.sendMessage({
+                key: 'v1.storage',
+                method: 'set',
+                method_key: st.audio_key,
+                method_value: a.id === "audio-on"
+            })
+        }
+    })
+})
+
+characters.forEach((c) => {
+    c.addEventListener('change', () => {
+        if (c.checked == true) {
+            browser.runtime.sendMessage({
+                key: 'v1.storage',
+                method: 'set',
+                method_key: st.character_key,
+                method_value: c.id
             })
         }
     })
